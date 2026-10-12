@@ -32,6 +32,8 @@ $plugins = Join-Path $pkg "plugins"
 if (Test-Path $plugins) { Remove-Item $plugins -Recurse -Force }
 New-Item -ItemType Directory -Force -Path $plugins | Out-Null
 Copy-Item (Join-Path $root "src\bin\Release\net472\CarturCooking.dll") $plugins -Force
+# The Happy status icon is loaded from beside the DLL (Plugin.Awake).
+Copy-Item (Join-Path $root "src\Assets\happy_icon.png") $plugins -Force
 
 New-Item -ItemType Directory -Force -Path $dist | Out-Null
 $zip = Join-Path $dist "Carturs_Cooking-$version.zip"
@@ -54,14 +56,16 @@ finally { $archive.Dispose() }
 Write-Host "packed $zip"
 
 # Nexus installs by unpacking into the game folder rather than reading a manifest, so its
-# zip is the DLL at its real path and nothing else - no manifest, icon or README, which
-# would land in the Valheim root as loose files.
+# zip is the plugin folder at its real path and nothing else - no manifest, icon or README,
+# which would land in the Valheim root as loose files. The Happy icon sits beside the DLL.
 $nexus = Join-Path $dist "Carturs_Cooking-$version-Nexus.zip"
 if (Test-Path $nexus) { Remove-Item $nexus }
 $archive = [System.IO.Compression.ZipFile]::Open($nexus, "Create")
 try {
-    [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
-        $archive, (Join-Path $plugins "CarturCooking.dll"), "BepInEx/plugins/CarturCooking.dll") | Out-Null
+    foreach ($f in "CarturCooking.dll", "happy_icon.png") {
+        [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
+            $archive, (Join-Path $plugins $f), "BepInEx/plugins/CarturCooking/$f") | Out-Null
+    }
 }
 finally { $archive.Dispose() }
 

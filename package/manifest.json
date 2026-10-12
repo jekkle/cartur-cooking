@@ -1,0 +1,9 @@
+{
+  "name": "Carturs_Cooking",
+  "version_number": "1.0.0",
+  "website_url": "https://github.com/jekkle/cartur-cooking",
+  "description": "More from the Cooking skill you already have: better cooks make food with more health, stamina, regen and eitr, and from level 50 perfect meals make you Happy. Inspired by Smoothbrain's Cooking.",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.2333"
+  ]
+}
